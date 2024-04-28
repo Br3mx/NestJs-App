@@ -10,7 +10,6 @@ import {
   Put,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { Product } from 'src/db';
 import { CreateProductDTO } from './dtos/create-product.dto';
 import { UpdateProductDTO } from './dtos/update-product.dto';
 
@@ -24,16 +23,16 @@ export class ProductsController {
     return this.productsService.getAll();
   }
   @Get('/:id')
-  getById(@Param('id', new ParseUUIDPipe()) id: string) {
-    const prod = this.productsService.getById(id);
+  async getById(@Param('id', new ParseUUIDPipe()) id: string) {
+    const prod = await this.productsService.getById(id);
     if (!prod) throw new NotFoundException('Product not found');
     return prod;
   }
   @Delete('/:id')
-  deleteProduct(@Param('id', new ParseUUIDPipe()) id: string) {
-    if (!this.productsService.getById(id))
+  async deleteById(@Param('id', new ParseUUIDPipe()) id: string) {
+    if (!(await this.productsService.getById(id)))
       throw new NotFoundException('Product not found');
-    this.productsService.deleteProduct(id);
+    await this.productsService.deleteById(id);
     return { success: true };
   }
   @Post('/')
@@ -41,14 +40,14 @@ export class ProductsController {
     return this.productsService.create(producData);
   }
   @Put('/:id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() productData: UpdateProductDTO,
   ) {
-    if (!this.productsService.getById(id))
+    if (!(await this.productsService.getById(id)))
       throw new NotFoundException('Product not found');
 
-    this.productsService.updateById(id, productData);
+    await this.productsService.updateById(id, productData);
     return { success: true };
   }
 }
