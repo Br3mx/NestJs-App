@@ -28,6 +28,17 @@ export class ProductsController {
     if (!prod) throw new NotFoundException('Product not found');
     return prod;
   }
+  @Get('/extended')
+  getAllExtended(): any {
+    return this.productsService.getAllExtended();
+  }
+
+  @Get('/extended/:id')
+  async getExtendedById(@Param('id', new ParseUUIDPipe()) id: string) {
+    const prod = await this.productsService.getExtendedById(id);
+    if (!prod) throw new NotFoundException('Product not found');
+    return prod;
+  }
   @Delete('/:id')
   async deleteById(@Param('id', new ParseUUIDPipe()) id: string) {
     if (!(await this.productsService.getById(id)))
@@ -36,8 +47,8 @@ export class ProductsController {
     return { success: true };
   }
   @Post('/')
-  create(@Body() producData: CreateProductDTO) {
-    return this.productsService.create(producData);
+  create(@Body() productData: CreateProductDTO) {
+    return this.productsService.create(productData);
   }
   @Put('/:id')
   async update(
