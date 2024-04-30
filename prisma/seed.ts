@@ -77,6 +77,10 @@ function getOrders() {
 }
 
 async function seed() {
+  await db.product.deleteMany();
+  await db.client.deleteMany();
+  await db.order.deleteMany();
+
   await Promise.all(
     getProducts().map((product) => {
       return db.product.create({ data: product });
